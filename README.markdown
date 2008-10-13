@@ -1,7 +1,7 @@
 = jSilver =
 ======================
 
-Fucks up your christmas.
+***** up your christmas.
 
 _yay vaporware_
 
