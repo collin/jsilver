@@ -43,7 +43,7 @@ _Ctrl+Shift+Down_
 Move the current node of the tree after its next sibling.
 
 _Ctrl+H_
-Toggle the current node, see what it would look like removed without actulally removing it.
+Toggle 'visibility' of the current node, see what it would look like removed without actulally removing it.
 
 _Del_
 Remove the current node.
@@ -60,10 +60,22 @@ Go to normal editing mode in the context of this part of the tree. If the name o
 _Shift+Enter_
 Same as Enter, except upon completion you will not be returned to the Context Stack Editor.
 
+=== Keybindings ===
+All keybindings are defaults they may be changed through the control panel.
+
+=== Macros ===
+Macros and sharing may be managed by the control panel.
+
+===  ===
+
+Macros are repeatable sets of actions. They may be recorded and played back. Macros may be shared. Shared macros are protected by namespaces.
+
+For the love of god READ shared macrs or trust your sources.
+
 === Usage ===
 *Usage shows default key bindings*
 
-==== aCombination:Action ====
+==== Combination:Action ====
 
 _Esc_
 Dismiss the current console.
@@ -101,6 +113,18 @@ Clears the context stack. Undoing all side effects caused by the stack.
 
 _/reset_
 Reset and modifications made by the editor in the /edit command.
+
+_/record_
+Begin recording a macro. You will be asked to name this macro. You will get a blank slate to work in. You may namespace your own macros.
+
+_/record/:macro_name_
+Re-enter recording a macro. Shared macros will be forked. (Merging may not be possible, but the owner of a macro re-naming the macro to your fork is certainly possible.)
+
+_/stop_
+Stop recording/editing a macro.
+
+_/:macro_name_
+Play back a macro. Imported macros will be accessed: /:namespace/:macro_name
 
 ==== Combination:Action ====
 All these apply to the current context.
@@ -170,6 +194,12 @@ Moves elements after their next sibling.
   %sibling
   %current_context
 }}}
+
+_Ctrl+H_
+Toggle 'visibility' of the current node, see what it would look like removed without actulally removing it.
+
+_Del_
+Remove the current node.
 
 ======================
 Released under the "Don't Be A Dick" license.
