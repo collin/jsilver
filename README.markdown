@@ -5,6 +5,24 @@ Fu**s up your christmas.
 
 _yay vaporware_
 
+=== Keybindings ===
+All keybindings are defaults they may be changed through the control panel.
+
+=== Macros ===
+Macros and sharing may be managed by the control panel.
+
+Macros are repeatable sets of actions. They may be recorded and played back. Macros may be shared. Shared macros are protected by namespaces.
+
+For the love of god READ shared macrs or trust your sources.
+
+=== P2P ===
+As a first option, jSilver uses Legs to create a Peer to Peer network to share macros.
+
+A central server helps broker connections.
+
+Should that P2P be impossible, the central server will step in the fill the roll of the P2P network.
+
+
 === Context Stack ===
 A stack of jQuery objects. If there is not context the default context is jQuery(document);
 
@@ -16,6 +34,7 @@ Similar to an abstract syntax tree for javascript.
 With editing features.
 
 It is possible to request an edit to the tree be made that would not make sense or force the destruction of other parts of the tree. This is okay, but one must confirm when trying to do such things.
+
 
 ==== Combination:Action ====
 _Ctrl+Left_
@@ -59,18 +78,6 @@ Go to normal editing mode in the context of this part of the tree. If the name o
 
 _Shift+Enter_
 Same as Enter, except upon completion you will not be returned to the Context Stack Editor.
-
-=== Keybindings ===
-All keybindings are defaults they may be changed through the control panel.
-
-=== Macros ===
-Macros and sharing may be managed by the control panel.
-
-===  ===
-
-Macros are repeatable sets of actions. They may be recorded and played back. Macros may be shared. Shared macros are protected by namespaces.
-
-For the love of god READ shared macrs or trust your sources.
 
 === Usage ===
 *Usage shows default key bindings*
