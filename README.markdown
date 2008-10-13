@@ -1,7 +1,7 @@
 = jSilver =
 ======================
 
-***** up your christmas.
+Fu**s up your christmas.
 
 _yay vaporware_
 
@@ -13,12 +13,57 @@ Methods that have a side effect go onto the context stack. Their side effect may
 === Context Stack Editor ===
 Similar to an abstract syntax tree for javascript.
 
-With editing features.+
+With editing features.
+
+It is possible to request an edit to the tree be made that would not make sense or force the destruction of other parts of the tree. This is okay, but one must confirm when trying to do such things.
+
+==== Combination:Action ====
+_Ctrl+Left_
+Step out of the current node of the tree.
+
+_Ctrl+Right_
+Step into the current node of the tree.
+
+_Ctrl+Up_
+Select the previous node in the tree.
+
+_Ctrl+Down_
+Select the next node in the tree.
+
+_Ctrl+Shift+Left_
+Move the current node of the tree before its parent.
+
+_Ctrl+Shift+Right_
+Prepend the curret node of the tree to its next sibling.
+
+_Ctrl+Shift+Up_
+Move the current node of the tree before its previous sibling. 
+
+_Ctrl+Shift+Down_
+Move the current node of the tree after its next sibling.
+
+_Ctrl+H_
+Toggle the current node, see what it would look like removed without actulally removing it.
+
+_Del_
+Remove the current node.
+
+_Tab_
+Select the next atom in this node.
+
+_Shift+Tab_
+Select the previous atom in this node.
+
+_Enter_
+Go to normal editing mode in the context of this part of the tree. If the name of a method call is selected the console used to specify that method will be opened. Upon pressing Enter or Escape you will be returned to the Context Stack Editor.
+
+_Shift+Enter_
+Same as Enter, except upon completion you will not be returned to the Context Stack Editor.
 
 === Usage ===
 *Usage shows default key bindings*
 
-==== Combination:Action ====
+==== aCombination:Action ====
 
 _Esc_
 Dismiss the current console.
