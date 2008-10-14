@@ -1,4 +1,4 @@
-# jSilver
+jSilver
 ======================
 
 #### gem dependencies
