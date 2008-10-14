@@ -1,9 +1,6 @@
 = jSilver =
 ======================
 
-Developer Instructions
-----------------------
-
 #### gem dependencies
  * collin-continuous_builder
  
