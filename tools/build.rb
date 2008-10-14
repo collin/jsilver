@@ -2,6 +2,9 @@ require 'lib/jsilver'
 require 'continuous_builder'
 require 'ostruct'
 require 'haml'
+require 'stomp'
+
+$morbid = Stomp::Client.new
 
 module JSilver
   class Builder < ContinuousBuilder
@@ -20,6 +23,10 @@ module JSilver
       :wait_for_all_edits => true,
       :files => JSilver.root/'vendor'/'screw-unit'/'lib'/'*',
       :update => :screw_unit_package
+      
+    watches :spec_runner,
+      :files => JSilver.root/'specs'/'haml'/'runner.html.haml',
+      :module => Haml
     
     def screw_unit_package path
       s = []
@@ -45,19 +52,22 @@ module JSilver
         script << "\n"
       end
       
-      File.open(JSilver.root/'specs'/'screw-unit.js', 'w+') do |f|
-        f.write script
-      end
+#      File.open(JSilver.root/'specs'/'screw-unit.js', 'w+') do |f|
+#        f.write script
+#      end
     end
     
     def spec path
+      short_path = path.to_s.gsub((JSilver.root/'specs').to_s, '')
       en = Haml::Engine.new((JSilver.root/'specs'/'template.html.haml').read)
-      html = en.render OpenStruct.new(:scripts => [path]) do; end
+      html = en.render OpenStruct.new(:scripts => [short_path]) do; end
       name = path.basename.to_s .gsub(".#{path.extname}", '')
       new_path = Pathname.new(path).dirname/"#{name}.html"
       File.open(new_path, 'w+') do |f|
         f.write(html)
       end
+      
+      $morbid.send 'CHANNEL_1', html
     end
     
     def bookmarklet path

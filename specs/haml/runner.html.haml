@@ -1,0 +1,56 @@
+!!!
+%html
+  %head
+    %script{:src=>"http://#{JSilver::Orbited::Host}:#{JSilver::Orbited::Port}/vendor/jquery-1.2.6.js"}
+    %script{:src=>"http://#{JSilver::Orbited::Host}:#{JSilver::Orbited::Port}/static/Orbited.js"}
+    :javascript
+      document.domain = document.domain
+      Orbited.settings.port = "#{JSilver::Orbited::Port}";
+      Orbited.settings.hostname = "#{JSilver::Orbited::Host}";
+      TCPSocket = Orbited.TCPSocket;
+    %script{:src=>"http://#{JSilver::Orbited::Host}:#{JSilver::Orbited::Port}/static/protocols/stomp/stomp.js"}
+    :javascript
+      jQuery(function(_) {
+        var stomp = new STOMPClient(),
+          client_id = JSON.stringify({
+            time: (new Date()).toString(),
+            user_agent: navigator.userAgent
+          });
+        
+        stomp.onopen = function() {
+          console.log("Opened Stomp Transport");
+        };
+        
+        stomp.onclose = function() {
+          console.log("Closed Stomp Transport");
+          console.log("Reconnecting");
+          connect();
+        };
+        
+        stomp.onerror = function(error) {
+          console.error(error);
+        };
+        
+        stomp.onerrorframe = function(frame) {
+          console.error('Error Frame: ', frame.body);
+        };
+        
+        stomp.onconnectedframe = function(frame) {
+          console.log('Connected Frame: ', frame.body);
+          console.log("Subscribing")
+          stomp.subscribe('CHANNEL_1', {exchange:''});
+        };
+        
+        stomp.onmessageframe = function(frame) {
+          console.log('Message Frame: ', frame);
+          var frame = _('<iframe>').html(frame.body);
+          _('body').append(frame);
+        };
+        
+        function connect() {
+          console.log("Connecting");
+          stomp.connect(document.domain, 61613, client_id, '');
+        }
+        connect();
+      });
+  %body

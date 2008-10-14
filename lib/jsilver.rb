@@ -21,6 +21,11 @@ class String
 end
 
 module JSilver
+  module Orbited
+    Host = 'localhost'
+    Port = '8001'
+  end
+  
   class << self
     def root
       @root||= Pathname.new(Pathname.new(File.dirname(__FILE__)).expand_path)/'..'
