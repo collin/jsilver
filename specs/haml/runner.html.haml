@@ -11,7 +11,7 @@
     %script{:src=>"http://#{JSilver::Orbited::Host}:#{JSilver::Orbited::Port}/static/protocols/stomp/stomp.js"}
     :javascript
       jQuery(function(_) {
-        var stomp = new STOMPClient(),
+        window.stomp = new STOMPClient(),
           client_id = JSON.stringify({
             time: (new Date()).toString(),
             user_agent: navigator.userAgent

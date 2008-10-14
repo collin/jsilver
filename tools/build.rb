@@ -5,6 +5,7 @@ require 'haml'
 require 'stomp'
 
 $morbid = Stomp::Client.new
+$morbid.subscribe "CHANNEL_2"
 
 module JSilver
   class Builder < ContinuousBuilder
