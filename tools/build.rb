@@ -1,9 +1,9 @@
 require 'lib/jsilver'
 require 'continuous_builder'
 
-class String
-  def escape_literals
-    gsub /\"/ , "\\\""
+class IOStream
+  def to_s
+  
   end
 end
 
@@ -17,7 +17,8 @@ module JSilver
       :update => :bookmarklet
 
     
-    def bookmarklet
+    def bookmarklet path
+      @script_items = []
       vendor
       preamble
       stylesheets
@@ -25,46 +26,65 @@ module JSilver
       postamble
       
       File.open(JSilver.root/'public'/'embedded.js', 'w+') do |f|
-        f.write(script_items.map(&:to_s).join('\n'))
+        script = ""
+        
+        
+        script_items.each do |item|
+          if item.is_a?(Pathname)
+            script += item.read
+          elsif item.is_a?(String)
+            puts item
+            script += item
+          end
+          script += "\n"
+        end
+        
+        f.write(script)
       end
     end
     
     def preamble
-      script_items.instance_eval do
-        << "THIS IS A GENERATED FILE FOR THE LOVE OF GOD DO NOT EDIT IT DIRECTLY"
-        << "Generated at: #{Time.new}"
-        << ";(function(_){"
-        << "_.jSilver = {};"
+      @script_items.instance_eval do
+        push "// THIS IS A GENERATED FILE FOR THE LOVE OF GOD DO NOT EDIT IT DIRECTLY"
+        push "// Generated at: #{Time.new}"
+        push ";(function(_){"
+        push "_.jSilver = {};"
       end
     end
     
     def postamble
-      script_items << "})(jQuery);"
+      @script_items << "})(jQuery);"
     end
     
     def stylesheets
-      JSilver.glob{/'views'/'**'/'*.css'}.each do |markup|
+      JSilver.glob do; self/'views'/'**'/'*.css' end.each do |markup|
         name = markup.basename.gsub(".#{markup.extname}", '')
         css = markup.read.escape_literals
        
-        script_items.instance_eval do
-          << "_.jSilver.#{name} = \"<style>#{css}</style>\";"
-          << "_(function() { _('head').append(_.jSilver.#{name});)});"
+        @script_items.instance_eval do
+          self << "_.jSilver.#{name} = \"<style>#{css}</style>\";"
+          self << "_(function() { _('head').append(_.jSilver.#{name});)});"
         end
       end
     end
     
     def markup
-      JSilver.glob{/'views'/'**'/'*.html'}.each do |markup|
+      JSilver.glob do; self/'views'/'**'/'*.html' end.each do |markup|
         name = markup.basename.gsub(".#{markup.extname}", '')
         html = markup.read.escape_literals
        
-        script_items << "_.jSilver.#{name} = \"#{html}\";"
+        @script_items << "_.jSilver.#{name} = \"#{html}\";"
       end
     end
     
     def vendor
-      script_items += JSilver.glob{/'vendor'/'**'/'*.js'}
+      @script_items.instance_eval do
+#       push JSilver.root/'vendor'/'keybinder'/'jquery.keybinder.js'
+      end
     end
   end
 end
+
+b = JSilver::Builder.new
+b.build_all
+b.build_continuously
