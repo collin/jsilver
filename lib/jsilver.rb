@@ -15,7 +15,8 @@ class String
   end
   
   def flat
-    gsub(/(\\n|\\r\\n)/, '')
+    gsub("\n", '').
+    gsub("\r\n", '')
   end
 end
 

@@ -1,0 +1,9 @@
+!!!
+%html
+  %head
+    %script{:src => "screw-unit.js"}
+    - for script in scripts
+     %script{:src => script}
+  %body
+    =yield
+  

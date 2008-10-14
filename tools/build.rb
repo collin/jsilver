@@ -7,12 +7,12 @@ module JSilver
     
     watches :javascripts,
       :wait_for_all_edits => true,
-      :files  => JSilver.root/'{app, vendor}'/'**'/'*.js',
+      :files  => JSilver.root/'{app}'/'**'/'*.js',
       :update => :bookmarklet
       
     watches :specs,
       :wait_for_all_edits => true,
-      :files  => JSilver.root/'specs'/'**'/'*.js',
+      :files  => JSilver.root/'specs'/'{models, views, controllers}'/'**'/'*.js',
       :update => :spec
     
     watches :screw_unit,
@@ -33,7 +33,7 @@ module JSilver
       
       s.map!(&:read)
       
-      css = (lib/'screw.css').escape_literals.flat
+      css = (lib/'screw.css').read.escape_literals.flat
       
       s << "jQuery(function(_){_('head').append(\"<style>#{css}</style>\")) });"
       
@@ -44,7 +44,7 @@ module JSilver
         script << "\n"
       end
       
-      File.open(JSilver.root/'spec'/'screw-unit.js', 'w+') do |f|
+      File.open(JSilver.root/'specs'/'screw-unit.js', 'w+') do |f|
         f.write script
       end
     end
