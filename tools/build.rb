@@ -1,23 +1,61 @@
 require 'lib/jsilver'
 require 'continuous_builder'
 
-class IOStream
-  def to_s
-  
-  end
-end
-
 module JSilver
   class Builder < ContinuousBuilder
     attr_accessor :script_items
     
     watches :javascripts,
       :wait_for_all_edits => true,
-      :files  => JSilver.root/'**'/'*.js',
+      :files  => JSilver.root/'{app, vendor}'/'**'/'*.js',
       :update => :bookmarklet
-
+      
+    watches :specs,
+      :wait_for_all_edits => true,
+      :files  => JSilver.root/'specs'/'**'/'*.js',
+      :update => :spec
+    
+    watches :screw_unit,
+      :wait_for_all_edits => true,
+      :files => JSilver.root/'vendor'/'screw-unit'/'lib'/'*',
+      :update => :screw_unit_package
+    
+    def screw_unit_package path
+      s = []
+      lib = JSilver.root/'vendor'/'screw-unit'/'lib'
+      s << lib/'jquery-1.2.6.js'
+      s << lib/'jquery.fn.js'
+      s << lib/'jquery.print.js'
+      s << lib/'screw.builder.js'
+      s << lib/'screw.matchers.js'
+      s << lib/'screw.events.js'
+      s << lib/'screw.behaviors.js'
+      
+      s.map!(&:read)
+      
+      css = (lib/'screw.css').escape_literals.flat
+      
+      s << "jQuery(function(_){_('head').append(\"<style>#{css}</style>\")) });"
+      
+      script = ""
+      
+      s.each do |atom|
+        script << atom
+        script << "\n"
+      end
+      
+      File.open(JSilver.root/'spec'/'screw-unit.js', 'w+') do |f|
+        f.write script
+      end
+    end
+    
+    def spec path
+      
+    end
     
     def bookmarklet path
+      #spec_for(path)
+      
       @script_items = []
       vendor
       preamble
@@ -33,7 +71,6 @@ module JSilver
           if item.is_a?(Pathname)
             script += item.read
           elsif item.is_a?(String)
-            puts item
             script += item
           end
           script += "\n"
@@ -79,7 +116,8 @@ module JSilver
     
     def vendor
       @script_items.instance_eval do
-#       push JSilver.root/'vendor'/'keybinder'/'jquery.keybinder.js'
+        push JSilver.root/'vendor'/'jquery-1.2.6.js'
+        push JSilver.root/'vendor'/'keybinder'/'jquery.keybinder.js'
       end
     end
   end

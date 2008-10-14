@@ -13,6 +13,10 @@ class String
   def escape_literals
     gsub(/\"/ , "\\\"")
   end
+  
+  def flat
+    gsub(/(\\n|\\r\\n)/, '')
+  end
 end
 
 module JSilver
