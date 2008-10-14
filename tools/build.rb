@@ -1,5 +1,7 @@
 require 'lib/jsilver'
 require 'continuous_builder'
+require 'ostruct'
+require 'haml'
 
 module JSilver
   class Builder < ContinuousBuilder
@@ -11,8 +13,7 @@ module JSilver
       :update => :bookmarklet
       
     watches :specs,
-      :wait_for_all_edits => true,
-      :files  => JSilver.root/'specs'/'{models, views, controllers}'/'**'/'*.js',
+      :files  => JSilver.root/'specs'/'{models,views,controllers}'/'**'/'*.js',
       :update => :spec
     
     watches :screw_unit,
@@ -35,7 +36,7 @@ module JSilver
       
       css = (lib/'screw.css').read.escape_literals.flat
       
-      s << "jQuery(function(_){_('head').append(\"<style>#{css}</style>\")) });"
+      s << "jQuery(function(_){_('head').append(\"<style>#{css}</style>\") });"
       
       script = ""
       
@@ -50,7 +51,13 @@ module JSilver
     end
     
     def spec path
-      
+      en = Haml::Engine.new((JSilver.root/'specs'/'template.html.haml').read)
+      html = en.render OpenStruct.new(:scripts => [path]) do; end
+      name = path.basename.to_s .gsub(".#{path.extname}", '')
+      new_path = Pathname.new(path).dirname/"#{name}.html"
+      File.open(new_path, 'w+') do |f|
+        f.write(html)
+      end
     end
     
     def bookmarklet path
