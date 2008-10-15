@@ -21,8 +21,8 @@ This server communicates with the build script to run tests in a browser as you 
 
 If you aren't running 0.7.x of Orbited with the embedded Morbid STOMP server. Or if you don't have another Stomp server you want to use, run this:
 
-'$ easy_install morbid
-$ morbid'
+`$ easy_install morbid
+$ morbid`
    
 Open http://localhost:8001/specs/runner.html in a web browser. Open in all platforms you want tests to run on.
 Running browsers do not have to be on your local machine. As long as they can connect to the server, they can run tests.
