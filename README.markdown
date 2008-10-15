@@ -6,7 +6,7 @@ Fucks up your cristmas.
  * collin-continuous_builder
  
 #### non-gem dependencies
- * ![http://orbited.org/wiki/Installation](Version 0.7.x of Orbited)
+ * ![http://orbited.org/wiki/Installation Version 0.7.x of Orbited]
  
 #### development tools
 When developing, run
@@ -25,7 +25,7 @@ If you aren't running 0.7.x of Orbited with the embedded Morbid STOMP server. Or
 
 `$ morbid`
    
-Open ![http://localhost:8001/specs/runner.html] in a web browser. Open in all platforms you want tests to run on.
+Open ![http://localhost:8001/specs/runner.html]() in a web browser. Open in all platforms you want tests to run on.
 Running browsers do not have to be on your local machine. As long as they can connect to the server, they can run tests.
 
 Test results output will go to the console in which the build script is running.
