@@ -8,7 +8,11 @@ require 'json'
 $morbid = Stomp::Client.new
 
 $morbid.subscribe "$CHANNEL_2" do |msg|
-  puts "got: ".green << msg.body.red
+  msgs = msg.body.split("\n")
+  ua = msgs.shift
+  err = msgs.join("\n")
+  puts ua.bold
+  puts err.red
   puts ""
 end
 
@@ -73,7 +77,7 @@ module JSilver
         f.write(html)
       end
       
-      $morbid.send 'CHANNEL_1', html
+      $morbid.send 'CHANNEL_1', "/specs#{short_path}.html"
     end
     
     def bookmarklet path
