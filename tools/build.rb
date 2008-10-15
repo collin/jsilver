@@ -3,9 +3,14 @@ require 'continuous_builder'
 require 'ostruct'
 require 'haml'
 require 'stomp'
+require 'json'
 
 $morbid = Stomp::Client.new
-$morbid.subscribe "CHANNEL_2"
+
+$morbid.subscribe "$CHANNEL_2" do |msg|
+  puts "got: ".green << msg.body.red
+  puts ""
+end
 
 module JSilver
   class Builder < ContinuousBuilder

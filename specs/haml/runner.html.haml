@@ -11,11 +11,12 @@
     %script{:src=>"http://#{JSilver::Orbited::Host}:#{JSilver::Orbited::Port}/static/protocols/stomp/stomp.js"}
     :javascript
       jQuery(function(_) {
-        window.stomp = new STOMPClient(),
-          client_id = JSON.stringify({
-            time: (new Date()).toString(),
-            user_agent: navigator.userAgent
-          });
+        window.stomp = new STOMPClient();
+          
+        var client_id = JSON.stringify({
+          time: (new Date()).toString(),
+          user_agent: navigator.userAgent
+        });
         
         stomp.onopen = function() {
           console.log("Opened Stomp Transport");
@@ -43,8 +44,8 @@
         
         stomp.onmessageframe = function(frame) {
           console.log('Message Frame: ', frame);
-          var frame = _('<iframe>').html(frame.body);
-          _('body').append(frame);
+          var iframe = _('<iframe>').html(frame.body);
+          _('body').append(iframe);
         };
         
         function connect() {
