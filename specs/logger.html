@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <script src='http://localhost:8001/vendor/jquery-1.2.6.js'>    </script>
+    <script src='http://localhost:8001/static/Orbited.js'>    </script>
+    <script type='text/javascript'>
+      //<![CDATA[
+        document.domain = document.domain
+        Orbited.settings.port = "8001";
+        Orbited.settings.hostname = document.domain;//"localhost";
+        TCPSocket = Orbited.TCPSocket;
+      //]]>
+    </script>
+    <script src='http://localhost:8001/static/protocols/stomp/stomp.js'>    </script>
+    <script type='text/javascript'>
+      //<![CDATA[
+        jQuery(function(_) {
+          window.stomp = new STOMPClient();
+            
+          var client_id = JSON.stringify({
+            time: (new Date()).toString(),
+            user_agent: navigator.userAgent
+          });
+          
+          stomp.onopen = function() {
+            console.log("Opened Stomp Transport");
+          };
+          
+          stomp.onclose = function() {
+            console.log("Closed Stomp Transport");
+            console.log("Reconnecting");
+            connect();
+          };
+          
+          stomp.onerror = function(error) {
+            console.error(error);
+          };
+          
+          stomp.onerrorframe = function(frame) {
+            console.error('Error Frame: ', frame.body);
+          };
+          
+          stomp.onconnectedframe = function(frame) {
+            console.log('Connected Frame: ', frame.body);
+            console.log("Subscribing")
+            stomp.subscribe('$CHANNEL_3', {exchange:''});
+          };
+          
+          stomp.onmessageframe = function(frame) {
+            var payload = JSON.parse(frame.body);
+            console.log('Message Frame: ', payload);
+            console.dir(payload);
+          };
+          
+          function connect() {
+            console.log("Connecting");
+            stomp.connect(document.domain, 61613, client_id, '');
+          }
+          connect();
+        });
+      //]]>
+    </script>
+    <script src='specs/logger.js'></script>
+  </head>
+  <body></body>
+</html>
