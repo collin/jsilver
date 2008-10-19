@@ -1,0 +1,41 @@
+document.domain = document.domain;
+var path = "<%= short_path %>";
+
+console.log("Loaded Test: ", path);
+
+Screw.Unit(function() {
+
+  <%= script %>
+
+  before(function(){
+
+  });
+  
+  after(function() {  
+    setTimeout(function(){
+      var msgs = [];
+      
+      $('.failed').each(function() {
+        console.log("FAILED")
+        var it = jQuery(this)
+          ,_name = it.children(':first').text()
+          ,msg = it.find('.error').text()
+          ,fnString = it.data('screwunit.run').toString()
+          ,payload = {
+            it: _name
+            ,error: msg
+            ,fnString: fnString
+            ,run: $(window.frameElement).attr('name')
+            ,ua: navigator.userAgent
+          };
+          console.log('payload', payload)
+          msgs.push(payload);
+      });
+      
+      if(msgs.length)
+        parent.stomp.send(JSON.stringify(msgs), "$CHANNEL_2");
+    
+      jQuery(window.frameElement).remove();
+    }, 250);
+  });
+});
