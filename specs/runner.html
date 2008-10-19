@@ -7,7 +7,7 @@
       //<![CDATA[
         document.domain = document.domain
         Orbited.settings.port = "8001";
-        Orbited.settings.hostname = "localhost";
+        Orbited.settings.hostname = document.domain;//"localhost";
         TCPSocket = Orbited.TCPSocket;
       //]]>
     </script>
@@ -43,14 +43,18 @@
           stomp.onconnectedframe = function(frame) {
             console.log('Connected Frame: ', frame.body);
             console.log("Subscribing")
-            stomp.subscribe('CHANNEL_1', {exchange:''});
+            stomp.subscribe('$CHANNEL_1', {exchange:''});
           };
           
           stomp.onmessageframe = function(frame) {
-            console.log('Message Frame: ', frame.body);
+            var payload = JSON.parse(frame.body);
+            console.log('Message Frame: ', payload);
             var iframe = _('<iframe>');
             _('body').append(iframe);
-            iframe.attr('src', frame.body);
+            
+            iframe
+              .attr('src', payload.path)
+              .attr('name', payload.path+payload.time);
           };
           
           function connect() {

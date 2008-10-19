@@ -3,3 +3,4 @@ SPEC.markdown
 logs/
 log/
 orbited.*.log
+orb.db

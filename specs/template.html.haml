@@ -1,9 +1,9 @@
 !!!
 %html
   %head
-    %script{:src => '/specs/screw-unit.js'}
     %script{:src => '/public/embedded.js'}
-    - for script in scripts
-      %script{:src => "/specs#{script}"}
+    %script{:src => '/specs/screw-unit.js'}
+    %script{:type=> 'text/javascript', :src => short_generated_path}
+
   %body
     =yield
