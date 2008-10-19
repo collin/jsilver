@@ -1,0 +1,222 @@
+#! /usr/bin/ruby
+
+require 'lib/jsilver'
+require 'continuous_builder'
+require 'ostruct'
+require 'haml'
+require 'stomp'
+require 'sass'
+require 'sass/plugin'
+require 'json'
+require 'erb'
+
+$morbid = Stomp::Client.new
+
+$morbid.subscribe "$CHANNEL_2" do |msg|
+=begin
+  msgs = msg.body.split("\n")
+  ua = msgs.shift
+  path = msgs.shift
+  err = msgs.join("\n")
+  puts "Tested: " << path.green << " on platform:"
+  puts ua.bold
+  puts err.red
+  puts ""
+=end
+  $morbid.send "$CHANNEL_3", msg.body
+end
+
+module JSilver
+  class Builder < ContinuousBuilder
+    attr_accessor :script_items
+    
+    watches :javascripts,
+      :wait_for_all_edits => true,
+      :files  => JSilver.root/'{app,vendor}'/'**'/'*.js',
+      :update => :bookmarklet
+     
+    watches :specs,
+      :files  => JSilver.root/'specs'/'{models,views,controllers}'/'**'/'*.js',
+      :update => :spec
+    
+    watches :screw_unit,
+      :wait_for_all_edits => true,
+      :files => JSilver.root/'vendor'/'screw-unit'/'lib'/'*',
+      :update => :screw_unit_package
+      
+    watches :spec_clients,
+      :files => JSilver.root/'specs'/'haml'/'*.html.haml',
+      :module => Haml
+      
+    watches :logger_markup,
+      :files  => JSilver.root/'specs'/'logger'/'haml'/'*.html.haml',
+      :module => Haml,
+      :ugly => true
+      
+    watches :logger_styles,
+      :files  => JSilver.root/'specs'/'logger'/'sass'/'*.css.sass',
+      :module => Sass,
+      :style => :compressed
+      
+    watches :logger_assets,
+      :wait_for_all_edits => true,
+      :files  => JSilver.root/'specs'/'logger'/'*.{html,css,js}',
+      :update => :logger
+    
+    def logger path
+      css = JSilver.glob do; self/'specs'/'logger'/'*.css'  end
+      html= JSilver.glob do; self/'specs'/'logger'/'*.html' end
+      js  = JSilver.glob do; self/'specs'/'logger'/'*.js'   end
+      
+      css = css.inject("") {|all, sheet| "#{all} #{sheet.read}"}
+      css = "<style>#{css}</style>"
+      
+      html = html.inject("") do |all, markup|
+        "\n_.logger.#{name} = _(\"#{markup.read.escape_literals}\");"
+      end
+      
+      js = js.inject("") do |scripts, script|
+        "#{scripts}\n#{scripts}\n"
+      end
+      
+      all = [css, html, js].join("\n\n")
+      
+      (JSilver.root/'specs'/'logger.js').open('w+') do |f|
+        f.write all
+      end
+    end
+    
+    def screw_unit_package path
+      s = []
+      lib = JSilver.root/'vendor'/'screw-unit'/'lib'
+      #s << lib/'jquery-1.2.6.js' This comes in embedded.js. Only want 1 jQuery
+      s << lib/'jquery.fn.js'
+      s << lib/'jquery.print.js'
+      s << lib/'screw.builder.js'
+      s << lib/'screw.matchers.js'
+      s << lib/'screw.events.js'
+      s << lib/'screw.behaviors.js'
+      
+      s.map!(&:read)
+      
+      css = (lib/'screw.css').read.escape_literals.flat
+      
+      s << "jQuery(function(_){_('head').append(\"<style>#{css}</style>\") });"
+      
+      script = ""
+      
+      s.each do |atom|
+        script << atom
+        script << "\n"
+      end
+      
+      File.open(JSilver.root/'specs'/'screw-unit.js', 'w+') do |f|
+        f.write script
+      end
+    end
+    
+    def spec path
+      short_path = path.to_s.gsub((JSilver.root/'specs').to_s, '')
+      en = Haml::Engine.new((JSilver.root/'specs'/'template.html.haml').read)
+      generated_path = path.to_s.gsub('.js', '.generated')
+      script = path.read
+      
+      html = en.render OpenStruct.new({
+        :short_generated_path => generated_path.to_s.gsub((JSilver.root).to_s, '')
+      }) do; end
+      
+      erb_js = ERB.new((JSilver.root/'specs'/'template.js.erb').read)
+      File.open(generated_path, 'w+') do |f|
+        f.write(erb_js.result(binding))
+      end
+      
+      
+      name = path.basename.to_s .gsub(".#{path.extname}", '')
+      new_path = Pathname.new(path).dirname/"#{name}.html"
+      
+      File.open(new_path, 'w+') do |f|
+        f.write(html)
+      end
+      
+      payload = {
+        :path => "/specs#{short_path}.html",
+        :time => Time.now.to_s
+      }
+      
+      $morbid.send '$CHANNEL_1', payload.to_json
+    end
+    
+    def bookmarklet path
+      #spec_for(path)
+      
+      @script_items = []
+      vendor
+      preamble
+      stylesheets
+      markup
+      postamble
+      
+      File.open(JSilver.root/'public'/'embedded.js', 'w+') do |f|
+        script = ""
+        
+        
+        script_items.each do |item|
+          if item.is_a?(Pathname)
+            script += item.read
+          elsif item.is_a?(String)
+            script += item
+          end
+          script += "\n"
+        end
+        
+        f.write(script)
+      end
+    end
+    
+    def preamble
+      @script_items.instance_eval do
+        push "// THIS IS A GENERATED FILE FOR THE LOVE OF GOD DO NOT EDIT IT DIRECTLY"
+        push "// Generated at: #{Time.new}"
+        push ";(function(_){"
+        push "_.jSilver = {};"
+      end
+    end
+    
+    def postamble
+      @script_items << "})(jQuery);"
+    end
+    
+    def stylesheets
+      JSilver.glob do; self/'views'/'**'/'*.css' end.each do |markup|
+        name = markup.basename.gsub(".#{markup.extname}", '')
+        css = markup.read.escape_literals
+       
+        @script_items.instance_eval do
+          self << "_.jSilver.#{name} = \"<style>#{css}</style>\";"
+          self << "_(function() { _('head').append(_.jSilver.#{name});)});"
+        end
+      end
+    end
+    
+    def markup
+      JSilver.glob do; self/'views'/'**'/'*.html' end.each do |markup|
+        name = markup.basename.gsub(".#{markup.extname}", '')
+        html = markup.read.escape_literals
+       
+        @script_items << "_.jSilver.#{name} = \"#{html}\";"
+      end
+    end
+    
+    def vendor
+      @script_items.instance_eval do
+        push JSilver.root/'vendor'/'json2.js'
+        push JSilver.root/'vendor'/'jquery-1.2.6.js'
+        push JSilver.root/'vendor'/'keybinder'/'jquery.keybinder.js'
+      end
+    end
+  end
+end
+
+b = JSilver::Builder.new
+b.build_all
+b.build_continuously
