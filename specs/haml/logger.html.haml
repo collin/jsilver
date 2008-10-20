@@ -1,8 +1,10 @@
 !!!
 %html
   %head
-    %script{:src=>"http://#{JSilver::Orbited::Host}:#{JSilver::Orbited::Port}/vendor/jquery-1.2.6.js"}
-    %script{:src=>"http://#{JSilver::Orbited::Host}:#{JSilver::Orbited::Port}/static/Orbited.js"}
+    %script{:src=>"/vendor/jquery-1.2.6.js"}
+    %script{:src=>"/vendor/template/jquery.template.js"}
+    %script{:src=>"/vendor/object/jquery.object.js"}
+    %script{:src=>"/static/Orbited.js"}
     :javascript
       document.domain = document.domain
       Orbited.settings.port = "#{JSilver::Orbited::Port}";

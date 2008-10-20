@@ -7,3 +7,6 @@
 [submodule "vendor/template"]
 	path = vendor/template
 	url = git://github.com/collin/jquery_template.git
+[submodule "vendor/object"]
+	path = vendor/object
+	url = git://github.com/collin/jquery_object.git

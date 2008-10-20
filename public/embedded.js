@@ -4172,24 +4172,6 @@ jQuery.each([ "Height", "Width" ], function(i, name){
 
 
 (function(_) {
-  function delve(str) {
-    var slots = str.split('.')
-      ,len = slots.length
-      ,i
-      ,obj = _
-      ,slot;
-    
-    for(i=0; i <len; i++) {
-      slot = slots[slot];
-      if(obj.hasOwnProperty(slot))
-        obj = obj[slot];
-      else
-        obj = obj[slot] = {}; 
-    }
-    
-    return obj;
-  }
-
   var templates = {}
     ,syntax = {
       "\\?\\(([\\w]+)\\)": function(object) {
@@ -4202,7 +4184,9 @@ jQuery.each([ "Height", "Width" ], function(i, name){
       
       ,"\\#\\{([\\w]+)\\}": function(object) {
         return function(match, attr) {
-          return object[attr];
+          var obj_attr = object[attr];
+          if(_.isFunction(obj_attr)) return obj_attr();
+          return obj_attr;
         }
       }
       
@@ -4219,6 +4203,8 @@ jQuery.each([ "Height", "Width" ], function(i, name){
       ,"=\\{([\\w]+):([\\w]+)\\}": function(object) {
         return function(match, template, property) {
           var obj_prop = object[property];
+          if(_.isFunction(obj_prop)) obj_prop = obj_prop();
+          console.log(obj_prop)
           if(obj_prop.constructor === Array) {
             var len = obj_prop.length, i, render="";
             for(i=0; i<len; i++) render += _.template(template, obj_prop[i]);
@@ -4232,8 +4218,9 @@ jQuery.each([ "Height", "Width" ], function(i, name){
       
       ,"=\\[([\\w]+)\\|\\|([\\w]+)<-(\\w+)\\]": function(object) {
         return function(match, template, object_name, list) {
-          var list = object[list]
-            ,i, len = list.length
+          if(_.isFunction(object[list])) list = object[list]();
+          else  list = object[list];
+          var i, len = list.length
             ,locals, render = "";
           
           for(i=0; i<len; i++) {
@@ -4284,8 +4271,20 @@ jQuery.each([ "Height", "Width" ], function(i, name){
   };
 })(jQuery);
 
+jQuery.clone = function(obj) {
+  var _Object = {
+    clone: function(obj) {
+      function F(o) { jQuery.extend(this, o); }
+      F.prototype = this;
+      return new F(obj);
+    }
+  };
+  
+  return _Object.clone(obj);
+}
+
 // THIS IS A GENERATED FILE FOR THE LOVE OF GOD DO NOT EDIT IT DIRECTLY
-// Generated at: Mon Oct 20 08:04:03 -0500 2008
+// Generated at: Mon Oct 20 10:02:11 -0500 2008
 ;(function(_){
 _.jSilver = {};
 })(jQuery);

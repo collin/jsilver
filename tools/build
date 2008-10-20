@@ -83,7 +83,7 @@ EOS
 }      
       html = html.inject("") do |all, markup|
         name = markup.basename.to_s.gsub('.html', '')
-        "#{all}\n = _.template('#{name}', \"\\\n#{markup.read.escape_newlines.escape_literals}\");\n"
+        "#{all}\n_.template('#{name}', \"\\\n#{markup.read.escape_newlines.escape_literals}\");\n"
       end
       
       js = js.inject("") do |scripts, script|
@@ -224,6 +224,7 @@ EOS
         push JSilver.root/'vendor'/'jquery-1.2.6.js'
         push JSilver.root/'vendor'/'keybinder'/'jquery.keybinder.js'
         push JSilver.root/'vendor'/'template'/'jquery.template.js'
+        push JSilver.root/'vendor'/'object'/'jquery.object.js'
       end
     end
   end

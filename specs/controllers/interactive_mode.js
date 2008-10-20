@@ -8,7 +8,7 @@ describe('Sample', function() {
   });
   
   it("does equality", function() {
-    expect(0).to(equal, 1);
+    expect(0).to(equal, 4);
   });
   
   it("does equality", function() {
