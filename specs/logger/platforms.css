@@ -1,1 +1,13 @@
-.platform{width:32px;height:32px}.platform.ubuntu{background:url(/icons/ubuntu.png)}.platform.firefox{background:url(/icons/firefox.png)}.platform.msie{background:url(/icons/msie.png)}
+.platform {
+  width: 32px;
+  height: 32px;
+  border: 1px outset;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 10px; }
+  .platform.ubuntu {
+    background-image: url(/public/icons/ubuntu.png); }
+  .platform.firefox {
+    background-image: url(/public/icons/firefox.png); }
+  .platform.msie {
+    background-image: url(/public/icons/msie.png); }

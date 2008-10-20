@@ -50,13 +50,11 @@ module JSilver
       
     watches :logger_markup,
       :files  => JSilver.root/'specs'/'logger'/'haml'/'*.html.haml',
-      :module => Haml,
-      :ugly => true
+      :module => Haml
       
     watches :logger_styles,
       :files  => JSilver.root/'specs'/'logger'/'sass'/'*.css.sass',
-      :module => Sass,
-      :style => :compressed
+      :module => Sass
       
     watches :logger_assets,
       :wait_for_all_edits => true,
@@ -68,18 +66,31 @@ module JSilver
       html= JSilver.glob do; self/'specs'/'logger'/'*.html' end
       js  = JSilver.glob do; self/'specs'/'logger'/'*.js'   end
       
-      css = css.inject("") {|all, sheet| "#{all} #{sheet.read}"}
-      css = "<style>#{css}</style>"
+      pre = <<EOS
+(function(_) {
+  _.logger = {};
+EOS
       
+      post = <<EOS
+})(jQuery);
+EOS
+      
+      css = css.inject("") {|all, sheet| "#{all} #{sheet.read}"}
+      css = %{
+  _(function(){
+    _('head').append("\\\n<style>\\\n#{css.escape_newlines.escape_literals}</style>\\\n");
+  });
+}      
       html = html.inject("") do |all, markup|
-        "\n_.logger.#{name} = _(\"#{markup.read.escape_literals}\");"
+        name = markup.basename.to_s.gsub('.html', '')
+        "#{all}\n = _.template('#{name}', \"\\\n#{markup.read.escape_newlines.escape_literals}\");\n"
       end
       
       js = js.inject("") do |scripts, script|
-        "#{scripts}\n#{scripts}\n"
+        "#{scripts}\n#{script.read}\n"
       end
       
-      all = [css, html, js].join("\n\n")
+      all = [pre, css, html, js, post].join("")
       
       (JSilver.root/'specs'/'logger.js').open('w+') do |f|
         f.write all
@@ -212,6 +223,7 @@ module JSilver
         push JSilver.root/'vendor'/'json2.js'
         push JSilver.root/'vendor'/'jquery-1.2.6.js'
         push JSilver.root/'vendor'/'keybinder'/'jquery.keybinder.js'
+        push JSilver.root/'vendor'/'template'/'jquery.template.js'
       end
     end
   end

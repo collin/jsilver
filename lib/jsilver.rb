@@ -14,6 +14,10 @@ class String
     gsub(/\"/ , "\\\"")
   end
   
+  def escape_newlines
+    gsub "\n", "\\\n"
+  end
+  
   def flat
     gsub("\n", '').
     gsub("\r\n", '')
