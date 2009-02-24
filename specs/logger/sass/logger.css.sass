@@ -1,0 +1,51 @@
+.fails
+  :clear both
+  li
+    :list-style none
+    .meta
+      
+      p, h2
+        :float left
+      h2
+        :opacity 0.5
+      p
+        :margin
+          :top 28px
+          :left 16px
+      .meat
+        :padding-left 142px
+        :clear both
+        code
+          :padding-left -50px
+        .message
+          :padding-top 10px
+          :color red
+          
+.platform
+  :width 32px
+  :height 32px
+  :background
+    :repeat no-repeat
+    :position center
+  :padding 10px
+  :float left
+  :position relative
+
+  span
+    :font
+      :size 10px
+      :family sans-serif
+    :color white
+    :background-color black
+    :opacity 0.5
+    :position absolute
+    :bottom 0px
+    :left 0px
+    :padding 0 3px
+
+  &.ubuntu
+    :background-image url(/public/icons/ubuntu.png)
+  &.firefox
+    :background-image url(/public/icons/firefox.png)
+  &.msie
+    :background-image url(/public/icons/msie.png)

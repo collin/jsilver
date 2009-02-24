@@ -4185,7 +4185,7 @@ jQuery.each([ "Height", "Width" ], function(i, name){
       ,"\\#\\{([\\w]+)\\}": function(object) {
         return function(match, attr) {
           var obj_attr = object[attr];
-          if(_.isFunction(obj_attr)) return obj_attr();
+          if(_.isFunction(obj_attr)) return obj_attr.call(object);
           return obj_attr;
         }
       }
@@ -4203,8 +4203,7 @@ jQuery.each([ "Height", "Width" ], function(i, name){
       ,"=\\{([\\w]+):([\\w]+)\\}": function(object) {
         return function(match, template, property) {
           var obj_prop = object[property];
-          if(_.isFunction(obj_prop)) obj_prop = obj_prop();
-          console.log(obj_prop)
+          if(_.isFunction(obj_prop)) obj_prop = obj_prop.call(object);
           if(obj_prop.constructor === Array) {
             var len = obj_prop.length, i, render="";
             for(i=0; i<len; i++) render += _.template(template, obj_prop[i]);
@@ -4218,7 +4217,7 @@ jQuery.each([ "Height", "Width" ], function(i, name){
       
       ,"=\\[([\\w]+)\\|\\|([\\w]+)<-(\\w+)\\]": function(object) {
         return function(match, template, object_name, list) {
-          if(_.isFunction(object[list])) list = object[list]();
+          if(_.isFunction(object[list])) list = object[list].call(object);
           else  list = object[list];
           var i, len = list.length
             ,locals, render = "";
@@ -4284,7 +4283,7 @@ jQuery.clone = function(obj) {
 }
 
 // THIS IS A GENERATED FILE FOR THE LOVE OF GOD DO NOT EDIT IT DIRECTLY
-// Generated at: Mon Oct 20 10:02:11 -0500 2008
+// Generated at: Mon Nov 03 20:57:06 -0600 2008
 ;(function(_){
 _.jSilver = {};
 })(jQuery);

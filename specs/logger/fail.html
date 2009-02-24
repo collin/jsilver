@@ -1,3 +1,15 @@
-<div class='fail'>
-  =[platform||platform<-sniff_platforms]
+={platform:sniff_platforms}
+<div class='meta'>
+  <h2>It</h2>
+  <p>
+    #{it}
+  </p>
+  <div class='meat'>
+    <code class='prettyprint'>
+      #{spec}
+    </code>
+    <div class='message'>
+      #{error}
+    </div>
+  </div>
 </div>

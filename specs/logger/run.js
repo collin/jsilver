@@ -4,7 +4,6 @@ Run = _.clone({
   ,runnables: []
   
   ,to_html: function() {
-    console.log(this)
     return _.template('run', this);
   }
   
@@ -26,7 +25,6 @@ Run = _.clone({
   
   ,display: function() {
     var el = this.element();
-    console.log(el)
     if(el.length) el.replaceWith(this.to_html());
     else _('body').append(this.to_html());
   }

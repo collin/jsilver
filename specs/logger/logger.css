@@ -1,0 +1,44 @@
+.fails {
+  clear: both; }
+  .fails li {
+    list-style: none; }
+    .fails li .meta p, .fails li .meta h2 {
+      float: left; }
+    .fails li .meta h2 {
+      opacity: 0.5; }
+    .fails li .meta p {
+      margin-top: 28px;
+      margin-left: 16px; }
+    .fails li .meta .meat {
+      padding-left: 142px;
+      clear: both; }
+      .fails li .meta .meat code {
+        padding-left: -50px; }
+      .fails li .meta .meat .message {
+        padding-top: 10px;
+        color: red; }
+
+.platform {
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 10px;
+  float: left;
+  position: relative; }
+  .platform span {
+    font-size: 10px;
+    font-family: sans-serif;
+    color: white;
+    background-color: black;
+    opacity: 0.5;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    padding: 0 3px; }
+  .platform.ubuntu {
+    background-image: url(/public/icons/ubuntu.png); }
+  .platform.firefox {
+    background-image: url(/public/icons/firefox.png); }
+  .platform.msie {
+    background-image: url(/public/icons/msie.png); }
